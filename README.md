@@ -1,6 +1,6 @@
 # gettext-spellchecker
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![GitHub all releases](https://img.shields.io/github/downloads/rgglez/gettext-spellchecker/total)
 ![GitHub issues](https://img.shields.io/github/issues/rgglez/gettext-spellchecker)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/rgglez/gettext-spellchecker)
@@ -22,7 +22,7 @@ python3 check.py --path /usr/share/hunspell --lang=de_DE -i ../examples/example_
 ## Command line options
 
 * `--version` prints the script version.
-* `--path` the path to hunspell dictionaries. Default "/usr/share/hunspell".
+* `--path` the path to hunspell dictionaries. Default: "/usr/share/hunspell".
 * `--lang` the code of the language the strings in the form xx_YY where xx is in [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) format and YY in [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) format.
 * `-i`, `--input` the path of the .po or .pot file.
 * `-o`, `--output` optional path of the output file in CSV format.
