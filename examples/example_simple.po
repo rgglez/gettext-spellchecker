@@ -1,0 +1,38 @@
+# English to German translations for a sample project.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+
+#: Example phrases
+msgid "Hello, world!"
+msgstr "Hallo, Welt!"
+
+msgid "Good mornin"
+msgstr "Guten Morgen"
+
+msgid "How are you?"
+msgstr "Wie geht es Ihnen?"
+
+msgid "Thank you very much"
+msgstr "Vielen Dank"
+
+msgid "Please wait a moment"
+msgstr "Bitte warten Sie einen Moment"
+
+msgid "Have a nice day"
+msgstr "Einen schönen Tag noch"
+
+msgid "What is your name?"
+msgstr "Wie heißen Sie?"
+
+msgid "I don't understand"
+msgstr "Ich verstehe nict"
+
+msgid "Where is the restroom?"
+msgstr "Wo ist die Toilette?"
+
+msgid "See you later"
+msgstr "Bis später"

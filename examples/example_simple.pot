@@ -1,0 +1,38 @@
+# English source strings for a sample project.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+
+#: Example phrases
+msgid "Hello, world!"
+msgstr ""
+
+msgid "Good morning"
+msgstr ""
+
+msgid "How are you?"
+msgstr ""
+
+msgid "Thank you very much"
+msgstr ""
+
+msgid "Please wait a moment"
+msgstr ""
+
+msgid "Have a nice day"
+msgstr ""
+
+msgid "What is your name?"
+msgstr ""
+
+msgid "I don't understand"
+msgstr ""
+
+msgid "Where is the restroom?"
+msgstr ""
+
+msgid "See you later"
+msgstr ""
