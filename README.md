@@ -4,6 +4,8 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/rgglez/gettext-spellchecker/total)
 ![GitHub issues](https://img.shields.io/github/issues/rgglez/gettext-spellchecker)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/rgglez/gettext-spellchecker)
+![GitHub stars](https://img.shields.io/github/stars/rgglez/gettext-spellchecker?style=social)
+![GitHub forks](https://img.shields.io/github/forks/rgglez/gettext-spellchecker?style=social)
 
 ## Gettext spellchecker
 
