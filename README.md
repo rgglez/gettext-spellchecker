@@ -7,8 +7,6 @@
 ![GitHub stars](https://img.shields.io/github/stars/rgglez/gettext-spellchecker?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/rgglez/gettext-spellchecker?style=social)
 
-## Gettext spellchecker
-
 **gettext-spellchecker** is a Python script which checks the spell of `msgid` or `msgstr` strings in a [gettext](https://www.gnu.org/software/gettext/) .po or .pot file. 
 
 It uses [hunspell](https://github.com/hunspell/hunspell) dictionaries.
