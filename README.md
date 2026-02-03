@@ -66,6 +66,6 @@ You can install them using your operating system package manager or `pip` in a v
 
 ## License
 
-Copyright 2025 Rodolfo González González.
+Copyright 2026 Rodolfo González González.
 
 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). Please read the [LICENSE](LICENSE) file.
