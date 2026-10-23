@@ -16,10 +16,10 @@
 
 import argparse
 import sys
-from spellchecker import SpellChecker
+from .gettext_spellchecker import SpellChecker
 from colorama import init, Style, Fore
 import csv
-from version import __version__
+from .version import __version__
 
 # -----------------------------------------------------------------------------
 
