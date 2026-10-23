@@ -68,11 +68,12 @@ Read your operating system's documentation to know how to install those packages
 ```bash
 make dev     # editable install of the package and the dev tools
 make check   # lint, tests, build and twine check
+make bump    # bump the patch version and commit it
 ```
 
 The tests need the `de_DE` and `en_US` hunspell dictionaries (`apt install hunspell-de-de hunspell-en-us`).
 
-Releases are published to PyPI by the `Publish` GitHub workflow when a `vX.Y.Z` tag is pushed (`make release`). Run `make help` for the other targets.
+To release, bump the version with `make bump` (`PART=minor` or `PART=major` for the other parts), which commits it, then run `make release`: it tags `vX.Y.Z` and pushes the tag, and the `Publish` GitHub workflow uploads the package to PyPI. Run `make help` for the other targets.
 
 ## Notes
 

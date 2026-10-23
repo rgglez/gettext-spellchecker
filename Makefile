@@ -9,8 +9,10 @@
 
 PYTHON ?= python3
 VERSION := $(shell sed -n 's/^__version__ = "\(.*\)"/\1/p' src/gettext_spellchecker/version.py)
+PART ?= patch
+NEW_VERSION = $(shell $(PYTHON) -c "v=[int(x) for x in '$(VERSION)'.split('.')]; i=['major','minor','patch'].index('$(PART)'); v[i]+=1; v[i+1:]=[0]*(2-i); print('.'.join(map(str,v)))" 2>/dev/null)
 
-.PHONY: help dev lint test build check publish-test publish release clean
+.PHONY: help dev lint test build check bump publish-test publish release clean
 
 help:
 	@echo "make dev           install the package in editable mode and the dev tools"
@@ -18,6 +20,7 @@ help:
 	@echo "make test          pytest"
 	@echo "make build         build sdist and wheel into dist/"
 	@echo "make check         lint, test, build and twine check"
+	@echo "make bump         bump the patch version and commit it (PART=minor or PART=major)"
 	@echo "make publish-test  upload dist/ to TestPyPI with twine"
 	@echo "make publish       upload dist/ to PyPI with twine"
 	@echo "make release       tag v$(VERSION) and push it, the Publish workflow uploads to PyPI"
@@ -37,6 +40,12 @@ build: clean
 
 check: lint test build
 	$(PYTHON) -m twine check --strict dist/*
+
+bump:
+	@git diff --quiet HEAD || { echo "Commit your changes first"; exit 1; }
+	@[ -n "$(NEW_VERSION)" ] || { echo "PART must be major, minor or patch"; exit 1; }
+	sed -i 's/^__version__ = ".*"/__version__ = "$(NEW_VERSION)"/' src/gettext_spellchecker/version.py
+	git commit -am "v$(NEW_VERSION)"
 
 publish-test: check
 	$(PYTHON) -m twine upload --repository testpypi --skip-existing dist/*
