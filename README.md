@@ -7,23 +7,27 @@
 ![GitHub stars](https://img.shields.io/github/stars/rgglez/gettext-spellchecker?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/rgglez/gettext-spellchecker?style=social)
 
-**gettext-spellchecker** is a Python script which checks the spell of `msgid` or `msgstr` strings in a [gettext](https://www.gnu.org/software/gettext/) .po or .pot file. 
+**gettext-spellchecker** is a Python script which checks the spell of `msgid` or `msgstr` strings in a [gettext](https://www.gnu.org/software/gettext/) .po or .pot file.
 
 It uses [hunspell](https://github.com/hunspell/hunspell) dictionaries.
 
 It outputs the results to a CSV file or to colored output in the terminal.
 
+Plural forms are checked; obsolete (`#~`) entries are skipped.
+
 ## Execution
 
 ```bash
-python3 check.py --path /usr/share/hunspell --lang=de_DE -i ../examples/example_simple.po --check=msgstr
+python3 check.py --lang=de_DE -i ../examples/example_simple.po --check=msgstr
 ```
+
+The exit code is `0` when no errors are found, `1` when possible spelling errors are found, and `2` on invalid arguments (for instance, a missing dictionary), so the script can be used in CI pipelines or pre-commit hooks.
 
 ## Command line options
 
 * `--version` prints the script version.
 * `--path` the path to hunspell dictionaries. Default: "/usr/share/hunspell".
-* `--lang` the code of the language the strings in the form xx_YY where xx is in [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) format and YY in [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) format.
+* `--lang` the name of the hunspell dictionary of the language of the strings, without extension. Usually in the form xx_YY where xx is in [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) format and YY in [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) format, but any dictionary present in `--path` works (e.g. `de_DE_frami`).
 * `-i`, `--input` the path of the .po or .pot file.
 * `-o`, `--output` optional path of the output file in CSV format.
 * `--check` which string do you want the script to check: 'msgid' or 'msgstr'. Default="msgid".
@@ -44,18 +48,21 @@ Read your operating system's documentation to know how to install those packages
 
 ### Python modules
 
-This script depends on the following Python modules:
+This script depends on the following Python modules (see `requirements.txt`):
 
-* argparse
-* spellchecker
 * colorama
-* csv
 * polib
 * hunspell
-* pycountry
-* string
 
-You can install them using your operating system package manager or `pip` in a venv.
+You can install them using your operating system package manager or `pip` in a venv:
+
+```bash
+pip install -r requirements.txt
+```
+
+The `hunspell` module is compiled when installed with `pip`, so it needs the hunspell development files (`apt install libhunspell-dev` in Debian and derivatives). Alternatively, install `python3-hunspell` with `apt`.
+
+Note: `spellchecker` is this project's own module (`src/spellchecker.py`), not the [pyspellchecker](https://pypi.org/project/pyspellchecker/) package.
 
 ## Notes
 

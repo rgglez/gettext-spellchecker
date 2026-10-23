@@ -1,5 +1,5 @@
 """
-   Copyright 2025 Rodolfo González González.
+   Copyright 2026 Rodolfo González González.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
 """
 
 import argparse
+import sys
 from spellchecker import SpellChecker
 from colorama import init, Style, Fore
 import csv
 from version import __version__
 
-###############################################################################
+# -----------------------------------------------------------------------------
+
 
 def main():
     """
@@ -29,8 +31,8 @@ def main():
 
     parser = argparse.ArgumentParser(description="Scan and process .po or .pot files")
     parser.add_argument("--version", action="version", version=f'%(prog)s {__version__}')
-    parser.add_argument("--path", required=True, default="/usr/share/hunspell", help="The path to hunspell dictionaries.")
-    parser.add_argument("--lang", required=True, default="", help="Input language code in the form xx_YY where xx is in ISO 639-1 format and YY in ISO 3166-1 alpha-2 format")
+    parser.add_argument("--path", default="/usr/share/hunspell", help="The path to hunspell dictionaries. Default: /usr/share/hunspell")
+    parser.add_argument("--lang", required=True, help="Hunspell dictionary name, usually xx_YY (ISO 639-1 language, ISO 3166-1 alpha-2 country), e.g. de_DE")
     parser.add_argument("-i", "--input", required=True, help="Input .po or .pot file path and name")
     parser.add_argument("-o", "--output", required=False, help="CSV output file.")
     parser.add_argument("--check", required=False, default="msgid", choices=["msgid", "msgstr"], help="Input which string do you want me to check: 'msgid' or 'msgstr'")
@@ -39,7 +41,10 @@ def main():
 
     # Spellcheck...
 
-    sc = SpellChecker(path=args.path, lang=args.lang, po=args.input, check=args.check)
+    try:
+        sc = SpellChecker(path=args.path, lang=args.lang, po=args.input, check=args.check)
+    except FileNotFoundError as e:
+        parser.error(str(e))
     result = sc.Check()
 
     # Show results...
@@ -48,19 +53,25 @@ def main():
         # Store results in a CSV file.
         with open(args.output, mode="w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
-                       
+
             # Write rows with string and misspelled words.
             for string, words in result.items():
                 csv_writer.writerow([string, ", ".join(words)])
     else:
-        # Print it colorfully. 
+        # Print it colorfully.
         # Initialize Colorama (required for Windows compatibility)
-        init()        
+        init()
+        if result:
+            print(f"Possible spelling errors in {args.input}:")
         for string, words in result.items():
-            print(f"Possible spelling error in " + Style.BRIGHT + string + Style.RESET_ALL + " > " + Fore.RED + ", ".join(words) + Style.RESET_ALL)
-# main    
+            print(Style.BRIGHT + string + " → " + Style.RESET_ALL + Fore.RED + ", ".join(words) + Style.RESET_ALL)
 
-###############################################################################
+    # Non-zero exit code when errors were found, for CI and pre-commit hooks.
+    sys.exit(1 if result else 0)
+# main
+
+# -----------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     main()

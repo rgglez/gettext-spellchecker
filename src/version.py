@@ -1,5 +1,5 @@
 """
-   Copyright 2025 Rodolfo González González.
+   Copyright 2026 Rodolfo González González.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 """
 version.py
 
-This module defines the version of the gettext-cloud-translator package.
+This module defines the version of the gettext-spellchecker package.
 
 Attributes:
-    __version__ (str): A string representing the version number of the gettext-cloud-translator package.
+    __version__ (str): A string representing the version number of the gettext-spellchecker package.
                       The versioning follows the Semantic Versioning scheme.
 
 Example:
@@ -30,9 +30,7 @@ Example:
     - The third digit (3) represents the patch number.
 
 Notes:
-    The version information is used in setup.py for package distribution and can also be used
-    within the application to display the current version to the user, for example, in a CLI
-    using the '--version' argument.
+    The version information is displayed to the user with the '--version' argument.
 """
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"

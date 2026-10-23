@@ -1,5 +1,5 @@
 """
-   Copyright 2025 Rodolfo González González.
+   Copyright 2026 Rodolfo González González.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,17 +14,24 @@
    limitations under the License.
 """
 
+import os
 import polib
 import hunspell
-import pycountry
 import string
 
-###############################################################################
+# ASCII punctuation plus common typographic marks used in es/de/fr.
+PUNCTUATION = string.punctuation + "¿¡«»„“”‘’‚…–—"
+
+# -----------------------------------------------------------------------------
+
 
 class SpellChecker:
     def __init__(self, path, lang, po, check):
         """
         Constructor.
+
+        Raises FileNotFoundError if the hunspell dictionary for lang does not
+        exist in path.
         """
 
         # Path to the po file.
@@ -33,107 +40,92 @@ class SpellChecker:
         # "msgid" or "msgstr".
         self.check = check
 
-        # Form the paths for the dic and aff files for hunspell.
-        path = SpellChecker.strip_last_slash(path)
-        code = SpellChecker.normalize_language_code(lang)        
-        dic_file = path + "/" + code + ".dic"
-        aff_file = path + "/" + code + ".aff"
+        # Form the paths for the dic and aff files for hunspell. The language
+        # is used as is, since dictionary names vary (de_DE, de_DE_frami,
+        # ca_ES-valencia, ...).
+        dic_file = os.path.join(path, lang + ".dic")
+        aff_file = os.path.join(path, lang + ".aff")
+        for f in (dic_file, aff_file):
+            if not os.path.isfile(f):
+                available = sorted(
+                    n[:-4] for n in os.listdir(path) if n.endswith(".dic")
+                ) if os.path.isdir(path) else []
+                raise FileNotFoundError(
+                    f"hunspell dictionary file not found: {f}. "
+                    f"Available in {path}: {', '.join(available) or 'none'}"
+                )
 
         # Create the spell checker.
         self.spell_checker = hunspell.HunSpell(dic_file, aff_file)
     # __init__
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
 
     @staticmethod
-    def strip_last_slash(s):
+    def strip_punctuation(word):
         """
-        Strips trailing slashes from the path.
+        Strips leading and trailing punctuation marks from a word, keeping
+        inner ones such as apostrophes and hyphens (don't, e-mail).
         """
-        return s.rstrip('/')
-    # strip_last_slash
-
-    #--------------------------------------------------------------------------
-
-    @staticmethod
-    def normalize_language_code(code):
-        """
-        Validates and normalizes a language code in the form xx_YY.
-        
-        Args:
-            code (str): The language code to validate and normalize.
-            
-        Returns:
-            str: The normalized language code (xx_YY) if valid, otherwise None.
-        """
-        try:
-            # Split the code into language and country parts
-            lang_part, country_part = code.split('_')
-            
-            # Validate ISO 639-1 language code
-            lang = pycountry.languages.get(alpha_2=lang_part.lower())
-            if not lang:
-                return None
-            
-            # Validate ISO 3166-1 alpha-2 country code
-            country = pycountry.countries.get(alpha_2=country_part.upper())
-            if not country:
-                return None
-            
-            # Return the normalized code
-            return f"{lang_part.lower()}_{country_part.upper()}"
-        
-        except (ValueError, AttributeError):
-            # Handle invalid format or missing parts
-            return None
-    # normalize_language_code
-
-    #--------------------------------------------------------------------------
-
-    @staticmethod
-    def strip_punctuation(text):
-        """
-        Strips punctuation marks from a string.
-        """
-        return text.translate(str.maketrans('', '', string.punctuation))
+        return word.strip(PUNCTUATION)
     # strip_punctuation
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+
+    def strings(self, entry):
+        """
+        Returns the strings of an entry to be checked, including plural forms.
+        """
+        if self.check == "msgstr":
+            if entry.msgstr_plural:
+                return list(entry.msgstr_plural.values())
+            return [entry.msgstr]
+        return [entry.msgid, entry.msgid_plural]
+    # strings
+
+    # -------------------------------------------------------------------------
 
     def Check(self):
         """
-        Checks the spell of each word of each string. 
+        Checks the spell of each word of each string.
         """
 
         # Load the po file.
         po_file = polib.pofile(self.po)
 
         # Load the strings to be checked, either the "msgid" or the "msgstr".
+        # Obsolete (#~) entries are skipped.
         strings = [
-            entry.msgstr if self.check == "msgstr" else entry.msgid
-            for entry in po_file
+            s
+            for entry in po_file if not entry.obsolete
+            for s in self.strings(entry) if s
         ]
 
         # Be patient!!!!
 
-        # Result. Phrases (strings) will be the key, and the value will be an 
+        # Result. Phrases (strings) will be the key, and the value will be an
         # array of mispelled words.
-        result = {} 
+        result = {}
 
         # Check every string.
-        for string in strings:
-            wrong_words = [] # each mispelled word will be kept here
+        for text in strings:
+            wrong_words = []  # each mispelled word will be kept here
 
             # Check every word.
-            words = string.split()            
-            for word in words:
+            for word in text.split():
+                # ponytail: skips anything with digits or format chars
+                # (%(count)d, {0}); a real placeholder regex if this misses some.
+                if any(c.isdigit() or c in "%{}" for c in word):
+                    continue
                 word = SpellChecker.strip_punctuation(word)
-                if not self.spell_checker.spell(word):                    
+                if not word:
+                    continue
+                if not self.spell_checker.spell(word):
                     wrong_words.append(word)
 
             if wrong_words:
-                result[string] = wrong_words
-                                    
+                result[text] = wrong_words
+
         return result
-    # check_strings
+    # Check
 # SpellChecker
