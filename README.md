@@ -72,7 +72,29 @@ make check   # lint, tests, build and twine check
 
 The tests need the `de_DE` and `en_US` hunspell dictionaries (`apt install hunspell-de-de hunspell-en-us`).
 
-Releases are published to PyPI by the `Publish` GitHub workflow when a `vX.Y.Z` tag is pushed (`make release`). Run `make help` for the other targets.
+Run `make help` for the other targets.
+
+### Releasing
+
+Releases are published to PyPI by the `Publish` GitHub workflow, using Trusted Publishing.
+
+1. Commit your changes and check that the `CI` workflow passes.
+2. Bump the version, it is committed as `vX.Y.Z`:
+
+   ```bash
+   make bump              # 0.1.0 -> 0.1.1
+   make bump PART=minor   # 0.1.0 -> 0.2.0
+   make bump PART=major   # 0.1.0 -> 1.0.0
+   ```
+
+3. Optionally, publish to TestPyPI first: push the commit (`git push`), then run Actions → Publish → Run workflow → `testpypi`.
+4. Tag the new version and push it, the `Publish` workflow uploads the package to PyPI:
+
+   ```bash
+   make release
+   ```
+
+Run `make bump` and `make release` as separate commands, since `make` reads the version once when it starts.
 
 ## Notes
 
